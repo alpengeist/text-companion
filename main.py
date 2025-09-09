@@ -3,10 +3,11 @@ import time
 import ttkbootstrap as ttk
 import tkinter as tk
 import pynput
+from string import Template
 
 import config
 import remotectrl as remote
-import gpt
+import gptr
 
 BTN_WIDTH = 10
 GPT_READY = 'READY'
@@ -94,6 +95,12 @@ def prompt_completion(user_prompt):
     '''
     gpt_completion(prompt)
 
+def format_prompt(prompt, text) -> str:
+    if '$text' in prompt:
+        t = Template(prompt)
+        return t.substitute(text=text)
+    else:
+        return prompt + text
 def gpt_completion(prompt):
     set_message('')
     text = txt_input.get('1.0', tk.END)
@@ -102,17 +109,22 @@ def gpt_completion(prompt):
     progress_gpt['text'] = GPT_RUNNING
     frame.update()
     try:
-        chunks = gpt.chat_completion(
-            prompt=prompt, text=text, temperature=v_temperature.get(),
-            model=cbb_models.get(), max_tokens=int(v_max_tokens.get()),
-            instruction=config.instruction())
+        stream = gptr.call_model(
+            stream=True,
+            prompt=prompt,
+            temperature=v_temperature.get(),
+            model=cbb_models.get(),
+            max_output_tokens=int(v_max_tokens.get()),
+            instructions=config.instruction(),
+            input=format_prompt(prompt, text))
         txt_output.delete('1.0', tk.END)
         # collect the response from GPT live into the output box
-        for c in chunks:
-            t = c.choices[0].delta.content or ''
-            txt_output.insert(tk.END, t)
-            txt_output.see(tk.END)
-            txt_output.update()
+        for response in stream:
+            if response.type == 'response.output_text.delta':
+                t = response.delta or ''
+                txt_output.insert(tk.END, t)
+                txt_output.see(tk.END)
+                txt_output.update()
         # if switched on, write the output content to where the current keyboard focus is
         if v_write_back.get():
             write_back()

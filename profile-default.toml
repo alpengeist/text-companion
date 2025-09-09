@@ -7,12 +7,12 @@
 name  = "Default"
 # Model names taken from https://platform.openai.com/playground
 # first one is default
-models = [ 'gpt-4.1-mini', 'gpt-4.1']
+models = ['gpt-5-mini', 'gpt-4.1-mini', 'gpt-4.1', 'gpt-5', ]
 # give a general instruction to the model.
 instruction = "Your are a helpful assistant. Your answers are concise and precise."
 # between 0 and 1
 temperature = 0.7
-max_tokens = 1000
+max_tokens = 5000
 
 # MANDATORY key-value pairs of action names, which are displayed as choices in the UI, and action prompts,
 # which are put in front of the input text. The first entry is the default.
@@ -36,7 +36,7 @@ on_top = 0
 # The pynput module may have trouble with <ctrl> and <alt> on MacOS. Use <cmd> and <shift> instead if
 # you experience any difficulties. <alt> on the Mac is equivalent to the "Option" key.
 hotkey = '<ctrl>+<alt>+g'
-hotkey2 = '<ctrl>+<alt>+f'
+hotkey2 = '<ctrl>+<alt>+h'
 # Apps have to digest the hotkeys first before they can copy selected text. This takes a little time.
 # After the waiting time the companion sends ctr+c (macOS cmd+c) to the app.
 # If you notice that selected text is not copied or a "c" overwrites the text, try increasing the time.

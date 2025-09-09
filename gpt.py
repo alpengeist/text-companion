@@ -16,7 +16,10 @@ def chat_completion(prompt='', text='', temperature=0.7, model='gpt-4.1-mini', m
         {'role': 'system', 'content': instruction },  # general instruction to the chat
         {'role': 'user', 'content': format_prompt(prompt, text)}
     ]
+    if model.startswith('gpt-5'):
+        temperature = None
     print(f"model={model}, temperature={temperature}\n{messages}")
+
     return client.chat.completions.create(
         model=model,
         messages=messages,
